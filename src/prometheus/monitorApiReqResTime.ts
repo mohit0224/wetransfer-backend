@@ -9,8 +9,14 @@ const reqResTime = new client.Histogram({
 	buckets: [1, 50, 100, 200, 300, 500, 800, 1000, 2000],
 });
 
+const total_requests = new client.Counter({
+	name: "total_requests",
+	help: "Total number of requests",
+});
+
 const monitorApiReqResTime = responseTime(
 	(req: Request, res: Response, time) => {
+		total_requests.inc();
 		reqResTime
 			.labels({
 				method: req.method,
