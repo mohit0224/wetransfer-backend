@@ -1,6 +1,4 @@
-import envConfig from "./env.config";
 import * as sourceMapSupport from "source-map-support";
-import isProduction from "../utils/isProduction.utils";
 import { createLogger, format, transports } from "winston";
 const { combine, timestamp, json, colorize, printf } = format;
 
@@ -25,10 +23,6 @@ const transporter: (
 	new transports.File({ filename: "logs/app.log" }),
 	new transports.File({ filename: "logs/error.log", level: "error" }),
 ];
-
-// if (isProduction) {
-// 	transporter.push();
-// }
 
 const logger = createLogger({
 	level: "info",

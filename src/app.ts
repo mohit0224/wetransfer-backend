@@ -22,17 +22,23 @@ import globalErrorHandler from "./middlewares/globalErrorHandler.middleware";
 import asyncHandler from "./utils/asyncHandler.utils";
 import { apiResponse } from "./utils/httpResponse.utils";
 
+// note: prometheus config
+import client from "./configs/prometheus.config";
+import apiReqResTime from "./middlewares/apiReqResTime.middleware";
+
 // note: import all routes
 import csrfRouter from "./routes/csrf.routes";
 import healthRouter from "./routes/health.routes";
 
 const app: Application = express();
+const collectDefaultMetric = client.collectDefaultMetrics;
+collectDefaultMetric({ register: client.register });
 
 app.set("trust proxy", 1);
 app.use(getDeviceInfo);
 app.use(filterQuery);
 app.use(hpp(hppConfig));
-app.use(isHttps); // todo: will be active while deploying
+app.use(isHttps);
 app.use(cors(corsConfig));
 app.use(helmet(helmetConfig));
 app.use(rateLimiter());
@@ -42,11 +48,21 @@ app.use(morgan(morganFormat, morganFnc));
 app.use(cookieParser(envConfig.COOKIE_SIGN));
 // app.use(csrfProtection); // todo: enable while integration
 app.use(compression());
+app.use(apiReqResTime);
 
 app.get(
 	"/",
 	asyncHandler((_, res) => {
 		res.status(200).json(new apiResponse(200, "Server is running."));
+	})
+);
+
+app.get(
+	"/metrics",
+	asyncHandler(async (_, res) => {
+		res.setHeader("content-Type", client.register.contentType);
+		const metrics = await client.register.metrics();
+		res.send(metrics);
 	})
 );
 
