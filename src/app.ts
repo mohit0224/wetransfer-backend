@@ -42,7 +42,7 @@ app.use(hpp(hppConfig));
 app.use(isHttps);
 app.use(cors(corsConfig));
 app.use(helmet(helmetConfig));
-app.use(rateLimiter());
+app.use(rateLimiter(100));
 app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 app.use(morgan(morganFormat, morganFnc));
