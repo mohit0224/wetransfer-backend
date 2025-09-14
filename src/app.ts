@@ -58,7 +58,7 @@ app.get(
 	})
 );
 
-app.get("/metrics", prometheusRouter);
+app.use("/metrics", prometheusRouter);
 app.use("/api/v1/csrf-token", csrfRouter);
 app.use("/api/v1/health", healthRouter);
 
