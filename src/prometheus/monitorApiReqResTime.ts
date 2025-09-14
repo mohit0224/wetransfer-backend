@@ -9,14 +9,16 @@ const reqResTime = new client.Histogram({
 	buckets: [1, 50, 100, 200, 300, 500, 800, 1000, 2000],
 });
 
-const apiReqResTime = responseTime((req: Request, res: Response, time) => {
-	reqResTime
-		.labels({
-			method: req.method,
-			route: req.originalUrl || req.url,
-			status_code: res.statusCode,
-		})
-		.observe(time);
-});
+const monitorApiReqResTime = responseTime(
+	(req: Request, res: Response, time) => {
+		reqResTime
+			.labels({
+				method: req.method,
+				route: req.originalUrl || req.url,
+				status_code: res.statusCode,
+			})
+			.observe(time);
+	}
+);
 
-export default apiReqResTime;
+export default monitorApiReqResTime;

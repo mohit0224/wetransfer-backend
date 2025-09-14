@@ -24,7 +24,7 @@ import { apiResponse } from "./utils/httpResponse.utils";
 
 // note: prometheus config
 import client from "./configs/prometheus.config";
-import apiReqResTime from "./middlewares/apiReqResTime.middleware";
+import monitorApiReqResTime from "./prometheus/monitorApiReqResTime";
 
 // note: import all routes
 import csrfRouter from "./routes/csrf.routes";
@@ -49,7 +49,7 @@ app.use(morgan(morganFormat, morganFnc));
 app.use(cookieParser(envConfig.COOKIE_SIGN));
 // app.use(csrfProtection); // todo: enable while integration
 app.use(compression());
-app.use(apiReqResTime);
+app.use(monitorApiReqResTime); // for monitoring api request and response time
 
 app.get(
 	"/",
