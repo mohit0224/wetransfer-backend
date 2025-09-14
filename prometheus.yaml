@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 4s
+
+scrape_configs:
+  - job_name: 'monitor-metrics'
+    scheme: https
+    static_configs:
+      - targets:
+          - "api.mohitdheer.xyz"
+          - "betaapi.mohitdheer.xyz"

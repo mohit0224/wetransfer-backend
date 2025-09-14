@@ -29,6 +29,7 @@ import apiReqResTime from "./middlewares/apiReqResTime.middleware";
 // note: import all routes
 import csrfRouter from "./routes/csrf.routes";
 import healthRouter from "./routes/health.routes";
+import prometheusRouter from "./routes/prometheus.routes";
 
 const app: Application = express();
 const collectDefaultMetric = client.collectDefaultMetrics;
@@ -57,15 +58,7 @@ app.get(
 	})
 );
 
-app.get(
-	"/metrics",
-	asyncHandler(async (_, res) => {
-		res.setHeader("content-Type", client.register.contentType);
-		const metrics = await client.register.metrics();
-		res.send(metrics);
-	})
-);
-
+app.get("/metrics", prometheusRouter);
 app.use("/api/v1/csrf-token", csrfRouter);
 app.use("/api/v1/health", healthRouter);
 
