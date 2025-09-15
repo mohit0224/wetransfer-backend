@@ -1,5 +1,7 @@
 import * as sourceMapSupport from "source-map-support";
 import { createLogger, format, transports } from "winston";
+import LokiTransport from "winston-loki";
+import isProduction from "../utils/isProduction.utils";
 const { combine, timestamp, json, colorize, printf } = format;
 
 sourceMapSupport.install();
@@ -20,9 +22,22 @@ const transporter: (
 	new transports.Console({
 		format: consoleLogFormat,
 	}),
-	new transports.File({ filename: "logs/app.log" }),
-	new transports.File({ filename: "logs/error.log", level: "error" }),
 ];
+
+if (isProduction) {
+	transporter.push(
+		new LokiTransport({
+			host: "http://210.79.129.192:3100/",
+		})
+	);
+}
+
+if (!isProduction) {
+	transporter.push(new transports.File({ filename: "logs/app.log" }));
+	transporter.push(
+		new transports.File({ filename: "logs/error.log", level: "error" })
+	);
+}
 
 const logger = createLogger({
 	level: "info",
